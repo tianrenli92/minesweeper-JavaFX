@@ -86,7 +86,7 @@ public class GameController {
     private void draw() {
         lblMines.setText(String.valueOf(grid.getUntaggedMines()));
         lblSquares.setText(String.valueOf(grid.getUnrevealedSafeSquares()));
-        lblLives.setText(String.valueOf(grid.getLives()));
+        lblLives.setText(String.valueOf(grid.getCurrentLives()));
         lblStatus.setText(String.valueOf(grid.getGameStatus()));
         if (grid.getGameStatus() == Grid.GameStatus.ONGOING)
             lblStatus.setTextFill(Color.BLACK);

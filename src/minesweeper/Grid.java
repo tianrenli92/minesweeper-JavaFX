@@ -17,7 +17,7 @@ public class Grid {
         UNREVEALED, REVEALED, TAGGED, QUESTIONED;
     }
 
-    private int height, width, squares, unrevealedSafeSquares, mines, untaggedMines, lives;
+    private int height, width, squares, unrevealedSafeSquares, mines, untaggedMines, lives, currentLives;
     private GameStatus gameStatus;
     private int[][] mineMap;
     private Tag[][] tagMap;
@@ -31,6 +31,7 @@ public class Grid {
         squares = height * width;
         unrevealedSafeSquares = squares - mines;
         untaggedMines = mines;
+        currentLives = lives;
         gameStatus = GameStatus.ONGOING;
         tagMap = generateTagMap(height, width);
         firstReveal = false;
@@ -141,6 +142,10 @@ public class Grid {
         return lives;
     }
 
+    public int getCurrentLives() {
+        return currentLives;
+    }
+
     public int[][] getMineMap() {
         return mineMap;
     }
@@ -163,10 +168,10 @@ public class Grid {
             firstReveal = true;
         }
         if (mineMap[x][y] == MAP_MINE) {
-            lives--;
-            if (lives == 0)
+            currentLives--;
+            if (currentLives == 0)
                 gameStatus = GameStatus.LOSE;
-            else{
+            else {
                 tagMap[x][y] = Tag.UNREVEALED;
                 tag(x, y);
             }
@@ -254,7 +259,7 @@ public class Grid {
             for (int dy = -1; dy <= 1; dy++) {
                 xx = x + dx;
                 yy = y + dy;
-                if (tagMap[xx][yy] == Tag.UNREVEALED)
+                if (mineMap[xx][yy]!=MAP_FRAME && tagMap[xx][yy] == Tag.UNREVEALED)
                     reveal(xx, yy);
             }
     }
@@ -262,6 +267,7 @@ public class Grid {
     public void replay() {
         unrevealedSafeSquares = squares - mines;
         untaggedMines = mines;
+        currentLives = lives;
         gameStatus = GameStatus.ONGOING;
         tagMap = generateTagMap(height, width);
     }
