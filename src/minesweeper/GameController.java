@@ -24,7 +24,7 @@ public class GameController {
     // initialize grid
     public void setConfig(int height, int width, int mines) {
         grid = new Grid(height, width, mines);
-        lblMines.setText(String.valueOf(grid.getMines()));
+        lblMines.setText(String.valueOf(grid.getUntaggedMines()));
     }
 
     // click back button
