@@ -17,29 +17,31 @@ public class Grid {
         UNREVEALED, REVEALED, TAGGED, QUESTIONED;
     }
 
-    private int height, width, squares, unrevealedSquares, mines, untaggedMines;
+    private int height, width, squares, safeSquares, mines, untaggedMines;
     private GameStatus gameStatus;
     private int[][] mineMap;
     private Tag[][] tagMap;
+    private boolean firstReveal;
 
     public Grid(int height, int width, int mines) {
         this.height = height;
         this.width = width;
         this.mines = mines;
         squares = height * width;
-        unrevealedSquares = squares;
+        safeSquares = squares - mines;
         untaggedMines = mines;
         gameStatus = GameStatus.ONGOING;
-        mineMap = generateMineMap(height, width, squares, mines);
         tagMap = generateTagMap(height, width);
+        firstReveal = false;
     }
 
-    private int[][] generateMineMap(int height, int width, int squares, int mines) {
+    private int[][] generateMineMap(int height, int width, int squares, int mines, int firstX, int firstY) {
         // frame mineMap
         mineMap = new int[height + 2][width + 2];
         for (int[] row : mineMap)
             Arrays.fill(row, MAP_FRAME);
         // generate mines
+        int safeSquares = squares - mines;
         Random gen = new Random();
         int rand;
         for (int i = 1; i <= height; i++) {
@@ -53,6 +55,10 @@ public class Grid {
                 }
                 squares--;
             }
+        }
+        // promise first reveal is not mine
+        if(mineMap[firstX][firstY] == MAP_MINE) {
+            swapSafeSquare(mineMap, safeSquares, firstX, firstY);
         }
         // generate adjacent mine count
         int s;
@@ -78,6 +84,22 @@ public class Grid {
         return mineMap;
     }
 
+    private void swapSafeSquare(int[][] mineMap, int safeSquares, int firstX, int firstY){
+        Random gen = new Random();
+        int rand;
+        for (int i = 1; i <= height; i++)
+            for (int j = 1; j <= width; j++)
+                if (mineMap[i][j] == 0) {
+                    rand = gen.nextInt(safeSquares);
+                    if (rand == 0){
+                        // swap mine and safe square
+                        mineMap[i][j] = MAP_MINE;
+                        mineMap[firstX][firstY] = 0;
+                        return;
+                    }
+                    safeSquares--;
+                }
+    }
     private Tag[][] generateTagMap(int height, int width) {
         tagMap = new Tag[height + 2][width + 2];
         for (Tag[] row : tagMap)
@@ -97,8 +119,8 @@ public class Grid {
         return squares;
     }
 
-    public int getUnrevealedSquares() {
-        return unrevealedSquares;
+    public int getSafeSquares() {
+        return safeSquares;
     }
 
     public int getMines() {
@@ -129,12 +151,16 @@ public class Grid {
             return;
         // reveal square
         tagMap[x][y] = Tag.REVEALED;
-        unrevealedSquares--;
         // check mine
+        if(!firstReveal) {
+            mineMap = generateMineMap(height, width, squares, mines, x, y);
+            firstReveal = true;
+        }
         if(mineMap[x][y] == MAP_MINE){
             gameStatus = GameStatus.LOSE;
             return;
         }
+        safeSquares--;
         // if there is no adjacent mine, reveal nearby safe area
         if(mineMap[x][y] == 0){
             Queue<Integer> qx = new LinkedList<>();
@@ -152,7 +178,7 @@ public class Grid {
                         if(mineMap[xxx][yyy] == MAP_FRAME || tagMap[xxx][yyy] != Tag.UNREVEALED)
                             continue;
                         tagMap[xxx][yyy] = Tag.REVEALED;
-                        unrevealedSquares--;
+                        safeSquares--;
                         if(mineMap[xxx][yyy] == 0){
                             qx.add(xxx);
                             qy.add(yyy);
@@ -164,7 +190,7 @@ public class Grid {
     }
 
     private void checkWin(){
-        if(unrevealedSquares == mines && untaggedMines == 0){
+        if(safeSquares == 0 && untaggedMines == 0){
             gameStatus = GameStatus.WIN;
         }
     }
@@ -191,7 +217,7 @@ public class Grid {
     }
 
     public void replay(){
-        unrevealedSquares = squares;
+        safeSquares = squares;
         untaggedMines = mines;
         gameStatus = GameStatus.ONGOING;
         tagMap = generateTagMap(height, width);

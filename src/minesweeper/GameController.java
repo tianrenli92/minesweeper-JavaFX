@@ -86,8 +86,12 @@ public class GameController {
 
     private void draw() {
         lblMines.setText(String.valueOf(grid.getUntaggedMines()));
-        lblSquares.setText(String.valueOf(grid.getUnrevealedSquares()));
+        lblSquares.setText(String.valueOf(grid.getSafeSquares()));
         lblStatus.setText(String.valueOf(grid.getGameStatus()));
+        if (grid.getGameStatus() == Grid.GameStatus.ONGOING)
+            lblStatus.setTextFill(Color.BLACK);
+        else
+            lblStatus.setTextFill(Color.RED);
         int[][] mineMap = grid.getMineMap();
         Grid.Tag[][] tagMap = grid.getTagMap();
         gc = canvas.getGraphicsContext2D();
