@@ -29,6 +29,13 @@ hs_err_pid*
 
 # End of https://www.gitignore.io/api/java
 
+# idea files
 .idea/
 out/
 META-INF/
+
+# netbean files
+build/
+nbproject/
+build.xml
+manifest.mf
