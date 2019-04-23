@@ -82,6 +82,10 @@ public class GameController {
             grid.tagMap(x, y);
             draw();
         }
+        else if(event.getButton() == MouseButton.MIDDLE){
+            grid.quickClear(x, y);
+            draw();
+        }
     }
 
     private void draw() {
