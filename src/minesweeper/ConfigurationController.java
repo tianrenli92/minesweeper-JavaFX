@@ -18,8 +18,8 @@ public class ConfigurationController {
     private RadioButton rbEasy, rbMedium, rbHard, rbCustom;
 
     @FXML
-    private TextField txtHeight, txtWidth, txtMines;
-    private int height, width, mines;
+    private TextField txtHeight, txtWidth, txtMines, txtLives;
+    private int height, width, mines, lives;
 
     @FXML
     private Label lblMsg;
@@ -39,13 +39,13 @@ public class ConfigurationController {
                 RadioButton chk = (RadioButton) new_toggle; // Cast object to radio button
                 if (chk == rbEasy) {
                     setConfigDisable(true);
-                    setConfig("9", "9", "10");
+                    setConfig("9", "9", "10", "1");
                 } else if (chk == rbMedium) {
                     setConfigDisable(true);
-                    setConfig("16", "16", "40");
+                    setConfig("16", "16", "40", "1");
                 } else if (chk == rbHard) {
                     setConfigDisable(true);
-                    setConfig("16", "30", "99");
+                    setConfig("16", "30", "99", "1");
                 } else if (chk == rbCustom) {
                     setConfigDisable(false);
                 }
@@ -54,23 +54,25 @@ public class ConfigurationController {
         });
     }
 
-    private void setConfig(String height, String width, String mines) {
+    private void setConfig(String height, String width, String mines, String lives) {
         txtHeight.setText(height);
         txtWidth.setText(width);
         txtMines.setText(mines);
+        txtLives.setText(lives);
     }
 
     private void setConfigDisable(boolean disable) {
         txtHeight.setDisable(disable);
         txtWidth.setDisable(disable);
         txtMines.setDisable(disable);
+        txtLives.setDisable(disable);
     }
 
     // click play button
     @FXML
     private void handleBtnPlayAction(ActionEvent event) throws Exception {
         // check integer
-        if (!convertString(txtHeight.getText(), txtWidth.getText(), txtMines.getText())) {
+        if (!convertString(txtHeight.getText(), txtWidth.getText(), txtMines.getText(), txtLives.getText())) {
             lblMsg.setText("Configs should be integers.");
             return;
         }
@@ -87,6 +89,10 @@ public class ConfigurationController {
             lblMsg.setText("Mines should be between 1 and squares - 1.");
             return;
         }
+        if (lives < 1 || lives > 99) {
+            lblMsg.setText("Lives should be between 1 and 99.");
+            return;
+        }
 
         // switch scene
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Game.fxml"));
@@ -96,14 +102,15 @@ public class ConfigurationController {
 
         // pass arguments
         GameController controller = fxmlLoader.<GameController>getController();
-        controller.setConfig(height, width, mines);
+        controller.setConfig(height, width, mines, lives);
     }
 
-    private boolean convertString(String strHeight, String strWidth, String strMines) {
+    private boolean convertString(String strHeight, String strWidth, String strMines, String strLives) {
         try {
             height = Integer.valueOf(strHeight);
             width = Integer.valueOf(strWidth);
             mines = Integer.valueOf(strMines);
+            lives = Integer.valueOf(strLives);
 
         } catch (NumberFormatException e) {
             return false;

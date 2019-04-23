@@ -28,11 +28,13 @@
                   <Label layoutX="21.0" layoutY="9.0" text="Mines Left:" />
                   <Label fx:id="lblMines" layoutX="95.0" layoutY="9.0" text="10" />
                   <Button fx:id="btnBack" layoutX="735.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleBtnBackAction" text="Back" />
-                  <Label layoutX="262.0" layoutY="9.0" text="Status:" />
-                  <Label fx:id="lblStatus" layoutX="310.0" layoutY="9.0" text="Ongoing" />
-                  <Label layoutX="141.0" layoutY="9.0" text="Squares Left:" />
-                  <Label fx:id="lblSquares" layoutX="230.0" layoutY="9.0" text="10" />
+                  <Label layoutX="322.0" layoutY="9.0" text="Status:" />
+                  <Label fx:id="lblStatus" layoutX="370.0" layoutY="9.0" text="Ongoing" />
+                  <Label layoutX="128.0" layoutY="9.0" text="Squares Left:" />
+                  <Label fx:id="lblSquares" layoutX="217.0" layoutY="9.0" text="10" />
                   <Button fx:id="btnReplay" layoutX="573.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleReplayAction" text="Replay Same Board" />
+                  <Label layoutX="251.0" layoutY="9.0" text="Lives:" />
+                  <Label fx:id="lblLives" layoutX="292.0" layoutY="10.0" text="1" />
                </children>
             </AnchorPane>
          </children>

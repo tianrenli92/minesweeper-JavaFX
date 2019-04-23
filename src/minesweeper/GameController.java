@@ -28,11 +28,7 @@ public class GameController {
     private static final Color[] NUMBER_COLOR = {Color.WHITE, Color.BLUE, Color.GREEN, Color.RED, Color.DARKBLUE, Color.DARKRED, Color.DARKGREEN, Color.PURPLE, Color.ORANGE};
 
     @FXML
-    private Label lblMines;
-    @FXML
-    private Label lblSquares;
-    @FXML
-    private Label lblStatus;
+    private Label lblMines, lblSquares, lblStatus, lblLives;
     @FXML
     private Canvas canvas;
 
@@ -47,8 +43,8 @@ public class GameController {
 
 
     // initialize grid
-    public void setConfig(int height, int width, int mines) {
-        grid = new Grid(height, width, mines);
+    public void setConfig(int height, int width, int mines, int lives) {
+        grid = new Grid(height, width, mines, lives);
         draw();
     }
 
@@ -67,22 +63,21 @@ public class GameController {
         grid.replay();
         draw();
     }
+
     // click canvas
     @FXML
     private void handleCanvasMouseClicked(MouseEvent event) {
         double xx = event.getX();
         double yy = event.getY();
-        int x = (int)(yy / SQUARE_WIDTH) + 1;
-        int y = (int)(xx / SQUARE_WIDTH) + 1;
-        if(event.getButton() == MouseButton.PRIMARY){
+        int x = (int) (yy / SQUARE_WIDTH) + 1;
+        int y = (int) (xx / SQUARE_WIDTH) + 1;
+        if (event.getButton() == MouseButton.PRIMARY) {
             grid.reveal(x, y);
             draw();
-        }
-        else if(event.getButton() == MouseButton.SECONDARY){
-            grid.tagMap(x, y);
+        } else if (event.getButton() == MouseButton.SECONDARY) {
+            grid.tag(x, y);
             draw();
-        }
-        else if(event.getButton() == MouseButton.MIDDLE){
+        } else if (event.getButton() == MouseButton.MIDDLE) {
             grid.quickClear(x, y);
             draw();
         }
@@ -91,6 +86,7 @@ public class GameController {
     private void draw() {
         lblMines.setText(String.valueOf(grid.getUntaggedMines()));
         lblSquares.setText(String.valueOf(grid.getUnrevealedSafeSquares()));
+        lblLives.setText(String.valueOf(grid.getLives()));
         lblStatus.setText(String.valueOf(grid.getGameStatus()));
         if (grid.getGameStatus() == Grid.GameStatus.ONGOING)
             lblStatus.setTextFill(Color.BLACK);

@@ -17,16 +17,17 @@ public class Grid {
         UNREVEALED, REVEALED, TAGGED, QUESTIONED;
     }
 
-    private int height, width, squares, unrevealedSafeSquares, mines, untaggedMines;
+    private int height, width, squares, unrevealedSafeSquares, mines, untaggedMines, lives;
     private GameStatus gameStatus;
     private int[][] mineMap;
     private Tag[][] tagMap;
     private boolean firstReveal;
 
-    public Grid(int height, int width, int mines) {
+    public Grid(int height, int width, int mines, int lives) {
         this.height = height;
         this.width = width;
         this.mines = mines;
+        this.lives = lives;
         squares = height * width;
         unrevealedSafeSquares = squares - mines;
         untaggedMines = mines;
@@ -136,6 +137,10 @@ public class Grid {
         return gameStatus;
     }
 
+    public int getLives() {
+        return lives;
+    }
+
     public int[][] getMineMap() {
         return mineMap;
     }
@@ -158,7 +163,13 @@ public class Grid {
             firstReveal = true;
         }
         if (mineMap[x][y] == MAP_MINE) {
-            gameStatus = GameStatus.LOSE;
+            lives--;
+            if (lives == 0)
+                gameStatus = GameStatus.LOSE;
+            else{
+                tagMap[x][y] = Tag.UNREVEALED;
+                tag(x, y);
+            }
             return;
         }
         unrevealedSafeSquares--;
@@ -201,7 +212,7 @@ public class Grid {
         }
     }
 
-    public void tagMap(int x, int y) {
+    public void tag(int x, int y) {
         // validate
         if (gameStatus != GameStatus.ONGOING)
             return;
