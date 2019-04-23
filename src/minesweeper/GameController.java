@@ -6,12 +6,31 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class GameController {
+    private static final int SQUARE_WIDTH = 20;
+    private static final Color BG_COLOR_UNREVEALED = Color.LIGHTBLUE;
+    private static final Color BG_COLOR_TAGGED = Color.YELLOW;
+    private static final Color BG_COLOR_QUESTIONED = Color.LIGHTGREEN;
+    private static final Color BG_COLOR_REVEALED = Color.WHITE;
+    private static final Color TAG_COLOR = Color.RED;
+    private static final Color QUESTION_COLOR = Color.GREEN;
+    private static final Color MINE_COLOR = Color.BLACK;
+    private static final Color[] NUMBER_COLOR = {Color.WHITE, Color.LIGHTBLUE, Color.LIGHTGREEN, Color.PINK, Color.BLUE, Color.RED, Color.GREEN, Color.PURPLE, Color.ORANGE};
+
     @FXML
     private Label lblMines;
+    @FXML
+    private Label lblStatus;
+    @FXML
+    private Canvas canvas;
+
+    private GraphicsContext gc;
     private Grid grid;
 
 
@@ -24,7 +43,7 @@ public class GameController {
     // initialize grid
     public void setConfig(int height, int width, int mines) {
         grid = new Grid(height, width, mines);
-        lblMines.setText(String.valueOf(grid.getUntaggedMines()));
+        draw();
     }
 
     // click back button
@@ -37,4 +56,56 @@ public class GameController {
         stage.setScene(new Scene(gameScene));
     }
 
+    private void draw() {
+        lblMines.setText(String.valueOf(grid.getUntaggedMines()));
+        lblStatus.setText(String.valueOf(grid.getGameStatus()));
+        int[][] mineMap = grid.getMineMap();
+        Grid.Tag[][] tagMap = grid.getTagMap();
+        gc = canvas.getGraphicsContext2D();
+        for (int i = 1; i <= grid.getHeight(); i++)
+            for (int j = 1; j <= grid.getWidth(); j++) {
+                if (tagMap[i][j] == Grid.Tag.UNREVEALED) {
+                    drawRectangle(i, j, "", BG_COLOR_UNREVEALED, BG_COLOR_UNREVEALED);
+                    continue;
+                }
+                if (tagMap[i][j] == Grid.Tag.TAGGED) {
+                    drawRectangle(i, j, "F", BG_COLOR_TAGGED, TAG_COLOR);
+                    continue;
+                }
+                if (tagMap[i][j] == Grid.Tag.QUESTIONED) {
+                    drawRectangle(i, j, "?", BG_COLOR_QUESTIONED, QUESTION_COLOR);
+                    continue;
+                }
+                if (tagMap[i][j] == Grid.Tag.REVEALED) {
+                    if (mineMap[i][j] == Grid.MAP_MINE) {
+                        drawRectangle(i, j, "X", BG_COLOR_REVEALED, MINE_COLOR);
+                        continue;
+                    }
+                    drawRectangle(i, j, String.valueOf(mineMap[i][j]), BG_COLOR_REVEALED, NUMBER_COLOR[mineMap[i][j]]);
+                    continue;
+                }
+            }
+//        // draw test
+//        for (int i = 0; i<=8; i++)
+//            for (int j = 0; j<=8; j++)
+//            drawRectangle(i, j, String.valueOf(j), BG_COLOR_REVEALED, NUMBER_COLOR[j]);
+
+
+    }
+
+    private void drawRectangle(int x, int y, String text, Color bgColor, Color textColor) {
+        int xx = (y - 1) * SQUARE_WIDTH;
+        int yy = (x - 1) * SQUARE_WIDTH;
+        // draw boundary
+        gc.setFill(Color.BLACK);
+        gc.fillRect(xx, yy, SQUARE_WIDTH, SQUARE_WIDTH);
+
+        // draw rectangle
+        gc.setFill(bgColor);
+        gc.fillRect(xx + 1, yy + 1, SQUARE_WIDTH - 2, SQUARE_WIDTH - 2);
+
+        // draw text
+        gc.setStroke(textColor);
+        gc.strokeText(text, xx + 5, yy + 15);
+    }
 }

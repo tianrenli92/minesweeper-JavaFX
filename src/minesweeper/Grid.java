@@ -6,15 +6,15 @@ import java.util.Random;
 import java.util.Queue;
 
 public class Grid {
-    enum GameStatus {
+    public enum GameStatus {
         ONGOING, LOSE, WIN;
     }
 
-    private final int MAP_MINE = -1;
-    private final int MAP_FRAME = -2;
+    public final static int MAP_MINE = -1;
+    public final static int MAP_FRAME = -2;
 
-    enum Tag {
-        UNREVEALED, REVEALED, MINED, QUESTIONED;
+    public enum Tag {
+        UNREVEALED, REVEALED, TAGGED, QUESTIONED;
     }
 
     private int height, width, squares, unrevealedSquares, mines, untaggedMines;
@@ -179,10 +179,10 @@ public class Grid {
             return;
         // rotation of unrevealed, mined, and questioned
         if(tagMap[x][y] == Tag.UNREVEALED) {
-            tagMap[x][y] = Tag.MINED;
+            tagMap[x][y] = Tag.TAGGED;
             untaggedMines--;
         }
-        else if(tagMap[x][y] == Tag.MINED) {
+        else if(tagMap[x][y] == Tag.TAGGED) {
             tagMap[x][y] = Tag.QUESTIONED;
             untaggedMines++;
             checkWin();
