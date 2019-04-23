@@ -122,10 +122,9 @@ public class Grid {
     }
 
     public void reveal(int x, int y){
-        // consider frame
-        x++;
-        y++;
         // validate
+        if(gameStatus != GameStatus.ONGOING)
+            return;
         if(tagMap[x][y] != Tag.UNREVEALED)
             return;
         // reveal square
@@ -150,7 +149,7 @@ public class Grid {
                     for (int dy = -1; dy <= 1; dy++){
                         xxx = xx + dx;
                         yyy = yy + dy;
-                        if(tagMap[xxx][yyy] != Tag.UNREVEALED)
+                        if(mineMap[xxx][yyy] == MAP_FRAME || tagMap[xxx][yyy] != Tag.UNREVEALED)
                             continue;
                         tagMap[xxx][yyy] = Tag.REVEALED;
                         unrevealedSquares--;
@@ -170,26 +169,31 @@ public class Grid {
         }
     }
 
-    private void tagMap(int x, int y){
-        // consider frame
-        x++;
-        y++;
+    public void tagMap(int x, int y){
         // validate
+        if(gameStatus != GameStatus.ONGOING)
+            return;
         if(tagMap[x][y] == Tag.REVEALED)
             return;
         // rotation of unrevealed, mined, and questioned
         if(tagMap[x][y] == Tag.UNREVEALED) {
             tagMap[x][y] = Tag.TAGGED;
             untaggedMines--;
+            checkWin();
         }
         else if(tagMap[x][y] == Tag.TAGGED) {
             tagMap[x][y] = Tag.QUESTIONED;
             untaggedMines++;
-            checkWin();
         }
         else if(tagMap[x][y] == Tag.QUESTIONED) {
             tagMap[x][y] = Tag.UNREVEALED;
         }
     }
 
+    public void replay(){
+        unrevealedSquares = squares;
+        untaggedMines = mines;
+        gameStatus = GameStatus.ONGOING;
+        tagMap = generateTagMap(height, width);
+    }
 }

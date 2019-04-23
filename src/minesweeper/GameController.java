@@ -9,8 +9,11 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
 
 public class GameController {
     private static final int SQUARE_WIDTH = 20;
@@ -18,13 +21,16 @@ public class GameController {
     private static final Color BG_COLOR_TAGGED = Color.YELLOW;
     private static final Color BG_COLOR_QUESTIONED = Color.LIGHTGREEN;
     private static final Color BG_COLOR_REVEALED = Color.WHITE;
+    private static final Color BG_COLOR_EXPLODED = Color.RED;
     private static final Color TAG_COLOR = Color.RED;
     private static final Color QUESTION_COLOR = Color.GREEN;
     private static final Color MINE_COLOR = Color.BLACK;
-    private static final Color[] NUMBER_COLOR = {Color.WHITE, Color.LIGHTBLUE, Color.LIGHTGREEN, Color.PINK, Color.BLUE, Color.RED, Color.GREEN, Color.PURPLE, Color.ORANGE};
+    private static final Color[] NUMBER_COLOR = {Color.WHITE, Color.BLUE, Color.GREEN, Color.RED, Color.DARKBLUE, Color.DARKRED, Color.DARKGREEN, Color.PURPLE, Color.ORANGE};
 
     @FXML
     private Label lblMines;
+    @FXML
+    private Label lblSquares;
     @FXML
     private Label lblStatus;
     @FXML
@@ -56,8 +62,31 @@ public class GameController {
         stage.setScene(new Scene(gameScene));
     }
 
+    @FXML
+    private void handleReplayAction(ActionEvent event) throws Exception {
+        grid.replay();
+        draw();
+    }
+    // click canvas
+    @FXML
+    private void handleCanvasMouseClicked(MouseEvent event) {
+        double xx = event.getX();
+        double yy = event.getY();
+        int x = (int)(yy / SQUARE_WIDTH) + 1;
+        int y = (int)(xx / SQUARE_WIDTH) + 1;
+        if(event.getButton() == MouseButton.PRIMARY){
+            grid.reveal(x, y);
+            draw();
+        }
+        else if(event.getButton() == MouseButton.SECONDARY){
+            grid.tagMap(x, y);
+            draw();
+        }
+    }
+
     private void draw() {
         lblMines.setText(String.valueOf(grid.getUntaggedMines()));
+        lblSquares.setText(String.valueOf(grid.getUnrevealedSquares()));
         lblStatus.setText(String.valueOf(grid.getGameStatus()));
         int[][] mineMap = grid.getMineMap();
         Grid.Tag[][] tagMap = grid.getTagMap();
@@ -78,7 +107,7 @@ public class GameController {
                 }
                 if (tagMap[i][j] == Grid.Tag.REVEALED) {
                     if (mineMap[i][j] == Grid.MAP_MINE) {
-                        drawRectangle(i, j, "X", BG_COLOR_REVEALED, MINE_COLOR);
+                        drawRectangle(i, j, "X", BG_COLOR_EXPLODED, MINE_COLOR);
                         continue;
                     }
                     drawRectangle(i, j, String.valueOf(mineMap[i][j]), BG_COLOR_REVEALED, NUMBER_COLOR[mineMap[i][j]]);
@@ -106,6 +135,6 @@ public class GameController {
 
         // draw text
         gc.setStroke(textColor);
-        gc.strokeText(text, xx + 5, yy + 15);
+        gc.strokeText(text, xx + 6, yy + 15);
     }
 }
