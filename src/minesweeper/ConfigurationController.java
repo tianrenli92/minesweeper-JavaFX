@@ -27,6 +27,11 @@ public class ConfigurationController {
     @FXML
     private Button btnPlay;
 
+    @FXML
+    public void initialize() {
+        handleGrpDifficultyAction();
+    }
+
     // change difficulty
     private void handleGrpDifficultyAction() {
         grpDifficulty.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> {
@@ -104,10 +109,5 @@ public class ConfigurationController {
             return false;
         }
         return true;
-    }
-
-    @FXML
-    public void initialize() {
-        handleGrpDifficultyAction();
     }
 }
