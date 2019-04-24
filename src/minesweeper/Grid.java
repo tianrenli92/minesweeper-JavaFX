@@ -17,7 +17,7 @@ public class Grid {
         UNREVEALED, REVEALED, TAGGED, QUESTIONED;
     }
 
-    private int height, width, squares, unrevealedSafeSquares, mines, untaggedMines, lives, currentLives;
+    private int height, width, squares, mines, unrevealedSafeSquares, untaggedMines, lives, currentLives;
     private GameStatus gameStatus;
     private int[][] mineMap;
     private Tag[][] tagMap;
@@ -42,7 +42,7 @@ public class Grid {
         mineMap = new int[height + 2][width + 2];
         for (int[] row : mineMap)
             Arrays.fill(row, MAP_FRAME);
-        // generate mines
+        // randomly generate mines
         int safeSquares = squares - mines;
         Random gen = new Random();
         int rand;
@@ -87,6 +87,7 @@ public class Grid {
     }
 
     private void swapSafeSquare(int[][] mineMap, int safeSquares, int firstX, int firstY) {
+        // randomly select a safe square and swap it with the first reveal
         Random gen = new Random();
         int rand;
         for (int i = 1; i <= height; i++)
@@ -162,11 +163,12 @@ public class Grid {
             return;
         // reveal square
         tagMap[x][y] = Tag.REVEALED;
-        // check mine
+        // check if firstReveal
         if (!firstReveal) {
             mineMap = generateMineMap(height, width, squares, mines, x, y);
             firstReveal = true;
         }
+        // check mine
         if (mineMap[x][y] == MAP_MINE) {
             currentLives--;
             if (currentLives == 0)
@@ -223,7 +225,7 @@ public class Grid {
             return;
         if (tagMap[x][y] == Tag.REVEALED)
             return;
-        // rotation of unrevealed, mined, and questioned
+        // rotation of unrevealed, tagged, and questioned
         if (tagMap[x][y] == Tag.UNREVEALED) {
             tagMap[x][y] = Tag.TAGGED;
             untaggedMines--;
@@ -259,7 +261,7 @@ public class Grid {
             for (int dy = -1; dy <= 1; dy++) {
                 xx = x + dx;
                 yy = y + dy;
-                if (mineMap[xx][yy]!=MAP_FRAME && tagMap[xx][yy] == Tag.UNREVEALED)
+                if (mineMap[xx][yy] != MAP_FRAME && tagMap[xx][yy] == Tag.UNREVEALED)
                     reveal(xx, yy);
             }
     }

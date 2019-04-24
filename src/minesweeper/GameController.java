@@ -59,7 +59,7 @@ public class GameController {
     }
 
     @FXML
-    private void handleReplayAction(ActionEvent event) throws Exception {
+    private void handleBtnReplayAction(ActionEvent event) throws Exception {
         grid.replay();
         draw();
     }

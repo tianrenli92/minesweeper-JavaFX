@@ -27,7 +27,7 @@
                   <Label fx:id="lblStatus" layoutX="370.0" layoutY="9.0" text="Ongoing" />
                   <Label layoutX="128.0" layoutY="9.0" text="Squares Left:" />
                   <Label fx:id="lblSquares" layoutX="217.0" layoutY="9.0" text="10" />
-                  <Button fx:id="btnReplay" layoutX="573.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleReplayAction" text="Replay Same Board" />
+                  <Button fx:id="btnReplay" layoutX="573.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleBtnReplayAction" text="Replay Same Board" />
                   <Label layoutX="251.0" layoutY="9.0" text="Lives:" />
                   <Label fx:id="lblLives" layoutX="292.0" layoutY="10.0" text="1" />
                </children>
