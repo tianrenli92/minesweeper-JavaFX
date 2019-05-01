@@ -71,6 +71,8 @@ public class GameController {
         double yy = event.getY();
         int x = (int) (yy / SQUARE_WIDTH) + 1;
         int y = (int) (xx / SQUARE_WIDTH) + 1;
+        if(x > grid.getHeight() || y > grid.getWidth())
+            return;
         if (event.getButton() == MouseButton.PRIMARY) {
             grid.reveal(x, y);
             draw();
